@@ -2,4 +2,4 @@
 Simples traceroute
 
 Sintaxe de uso:
-./traceroute.sh <dominio ou IP do alvo>
+./traceroute.sh dominio_ou_IP_do_alvo
