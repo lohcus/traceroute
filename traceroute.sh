@@ -1,11 +1,42 @@
 #!/bin/bash
 
+#Criado por Daniel Domingues
+#Versao 1.1
+#https://github.com/lohcus
+
+colunas=$(tput cols) # VERIFICA O TAMANHO DA JANELA PARA PODER DESENHAR O LAYOUT
+
+divisao () {
+	printf "\r\033[35;1m=\033[m"
+
+	# LACO PARA PREENCHER UMA LINHA COM "="
+	for i in $(seq 0 1 $(($colunas-2)))
+	do
+		printf "\033[35;1m=\033[m"
+	done
+	echo
+}
+# ================================================================================
+
+if [ -z "$1" ]
+then
+	echo "Uso: $0 URL"
+	exit
+fi
+
 clear
 vermelho="\033[31;1m"
 verde="\033[32;1m"
 branco="\033[m"
+teste=$(host $1 | grep "not found")
+if [ ! -z "$teste" ]
+then
+	printf "$vermelho[+] Domínio $verde$1$vermelho não encontrado...\n$branco"
+	exit 1
+fi
+
 printf "$vermelho[+] Fazendo traceroute para o endereço $verde$1\n$branco"
-echo
+divisao
 
 for i in $(seq 1 255)
 do
@@ -28,14 +59,14 @@ do
 			#SALVA O IP DO ALVO E O TTL DA CONEXAO
 			ip=$(echo $pingo | cut -d " " -f 9- | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | head -2)
 			pingo=$(echo $pingo | grep "ttl=" | cut -d "=" -f 3 | cut -d " " -f 1)
-			printf "$vermelho===============================================\n$branco"
+			divisao
 			#TESTE PARA FAZER UMA SUGESTAO DO SISTEMA OPERACIONAL DO ALVO
 			case $pingo in
-				[0-9]|[0-5][0-9]|6[0-4]) printf "\033[32;1mDESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((64-$pingo))\033[32;1m (\033[31;1mLinux\033[32;1m)\n\033[m" ;;
-				6[5-9]|[7-9][0-9]|1[0-1][0-9]|12[0-8])printf "\033[32;1mDESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((128-$pingo))\033[32;1m (\033[31;1mWindows\033[32;1m)\n\033[m" ;;
-				12[8-9]|1[3-9][0-9]|2[0-5][0-9]|25[0-5])printf "\033[32;1mDESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((255-$pingo))\033[32;1m (\033[31;1mUnix\033[32;1m)\n\033[m" ;;
+				[0-9]|[0-5][0-9]|6[0-4]) printf "\033[32;1m[+] DESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((64-$pingo))\033[32;1m (\033[31;1mLinux\033[32;1m)\n\033[m" ;;
+				6[5-9]|[7-9][0-9]|1[0-1][0-9]|12[0-8])printf "\033[32;1m[+] DESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((128-$pingo))\033[32;1m (\033[31;1mWindows\033[32;1m)\n\033[m" ;;
+				12[8-9]|1[3-9][0-9]|2[0-5][0-9]|25[0-5])printf "\033[32;1m[+] DESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$pingo\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$((255-$pingo))\033[32;1m (\033[31;1mUnix\033[32;1m)\n\033[m" ;;
 			esac
-			printf "$vermelho===============================================\n$branco"
+			divisao
 			#ASSIM QUE ATINGE O ALVO, O SCRIPT E ENCERRADO
 			exit 0
 		else  #CASO NAO CONSIGA UMA RESPOSTA DO ROTEADOR, IMPRIME UM "*" VERMELHO
