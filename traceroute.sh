@@ -1,4 +1,6 @@
 #!/bin/bash
+#Criado por Daniel Domingues
+#https://github.com/lohcus
 
 colunas=$(tput cols) # VERIFICA O TAMANHO DA JANELA PARA PODER DESENHAR O LAYOUT
 
