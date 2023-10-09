@@ -36,12 +36,27 @@ centro_coluna=$(( $(( $(( $colunas-17))/2 )))) #CALCULO PARA CENTRALIZAR O TEXTO
 tput cup 0 $centro_coluna #POSICIONAR O CURSOR
 printf "\033[37;1mSCRIPT TRACEROUTE\n\033[m"
 
-# TESTE PARA VERIFICAR SE O DOMÍNIO RESPONDE
-teste=$(host $1 | grep "not found")
-if [ ! -z "$teste" ]
-then
-	printf "$vermelho[+] Domínio $verde$1$vermelho não encontrado...\n$branco"
-	exit 1
+# TESTE PARA SABER SE FOI DIGITADO UM IP OU UM DOMÍNIO
+regex="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
+if [[ $1 =~ $regex ]]; then
+        # O IP segue o padrão xxx.xxx.xxx.xxx
+        # Agora, verificamos se os valores numéricos estão no intervalo correto
+        IFS='.' read -ra octets <<< "$ip"
+        for octet in "${octets[@]}"; do
+                if [ "$octet" -lt 0 ] || [ "$octet" -gt 255 ]; then
+                        printf "$vermelho[+] Digite um IP válido...\n$branco"
+                        exit 1
+                fi
+        done
+else
+        # TESTE PARA VERIFICAR SE O DOMÍNIO RESPONDE
+        teste=$(host $1 | grep "not found")
+        if [ ! -z "$teste" ]
+        then
+                printf "$vermelho[+] Domínio $verde$1$vermelho não encontrado...\n$branco"
+                exit 1
+        fi
 fi
 
 printf "$branco[+] Fazendo traceroute para o endereço $verde$1\n$branco"
