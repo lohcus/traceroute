@@ -77,7 +77,7 @@ do
 				12[8-9]|1[3-9][0-9]|2[0-5][0-9]|25[0-5]) destino="Unix"; dec=255 ;;
 			esac
 			
-			printf "\033[32;1m[+] DESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$retorno\033[32;1m, ou seja, \033[31;1m64\033[32;1m decrementado de \033[31;1m$(($dec-$retorno))\033[32;1m (\033[31;1mpossivelmente $destino\033[32;1m)\n\033[m"
+			printf "\033[32;1m[+] DESTINO ALCANÇADO! \033[31;1m$ip\033[32;1m: TTL foi \033[31;1m$retorno\033[32;1m, ou seja, \033[31;1m$dec\033[32;1m decrementado de \033[31;1m$(($dec-$retorno))\033[32;1m (\033[31;1mpossivelmente $destino\033[32;1m)\n\033[m"
 
 			divisao
 			#ASSIM QUE ATINGE O ALVO, O SCRIPT E ENCERRADO
